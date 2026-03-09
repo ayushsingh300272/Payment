@@ -1,31 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transport Management</title>
 
+<title>Transport Trip Manager</title>
 <link rel="stylesheet" href="style.css">
 
-<!-- SheetJS for Excel Export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 </head>
 
 <body>
 
-<h1>🚚 Transport Management System</h1>
-
-<select id="menuSelect">
-<option value="trip">Trip Data</option>
-<option value="payment">Payments Received</option>
-</select>
-
-
-<!-- TRIP DATA SECTION -->
-
-<div id="tripSection">
-
-<h2>Trip Entry</h2>
+<h1>Transport Trip Manager</h1>
 
 <form id="tripForm">
 
@@ -35,52 +21,70 @@
 <option>EFC Logistics</option>
 </select>
 
+
 <label>Vehicle Number</label>
 <select id="truckNumber">
 <option>1982</option>
 <option>8218</option>
 </select>
 
-<label>Trip Date</label>
-<input type="date" id="tripDate" required>
 
-<label>Start Location</label>
-<input type="text" id="startLocation">
+<label>Loading Date</label>
+<input type="date" id="loadingDate" required>
 
-<label>End Location</label>
-<input type="text" id="endLocation">
+<label>Unloading Date</label>
+<input type="date" id="unloadingDate" required>
+
+
+<label>Loading Point</label>
+<select id="loadingPoint">
+<option>Sanikpur</option>
+<option>RP Shaw</option>
+</select>
+
+
+<label>Unloading Point</label>
+<select id="unloadingPoint">
+<option>Chiliyama</option>
+<option>Sinni</option>
+</select>
+
 
 <label>Weight Loaded</label>
 <input type="number" id="weightLoaded">
 
+
 <label>Weight Delivered</label>
 <input type="number" id="weightDelivered">
+
 
 <label>Diesel Expense</label>
 <input type="number" id="diesel">
 
-<label>Toll Expense</label>
-<input type="number" id="toll">
+
 
 <label>Driver Expense</label>
 <input type="number" id="driver">
+
 
 <button type="submit">Add Trip</button>
 
 </form>
 
-<h2>All Trip Records</h2>
+
+<h2>Trip Records</h2>
 
 <table id="tripTable">
 
 <thead>
 
 <tr>
+
 <th>Date</th>
 <th>Transporter</th>
 <th>Vehicle</th>
-<th>From</th>
-<th>To</th>
+<th>Loading</th>
+<th>Unloading</th>
 <th>Loaded</th>
 <th>Delivered</th>
 <th>Shortage</th>
@@ -89,6 +93,7 @@
 <th>Driver</th>
 <th>Total Expense</th>
 <th>Payment</th>
+
 </tr>
 
 </thead>
@@ -96,38 +101,10 @@
 <tbody></tbody>
 
 </table>
+
+<br>
 
 <button onclick="downloadExcel()">Download Excel</button>
-
-</div>
-
-
-
-<!-- PAYMENT SECTION -->
-
-<div id="paymentSection" style="display:none">
-
-<h2>Payments Received</h2>
-
-<table id="paymentTable">
-
-<thead>
-
-<tr>
-<th>Date</th>
-<th>Vehicle</th>
-<th>Route</th>
-<th>Payment Status</th>
-
-</tr>
-
-</thead>
-
-<tbody></tbody>
-
-</table>
-
-</div>
 
 
 <script src="script.js"></script>
