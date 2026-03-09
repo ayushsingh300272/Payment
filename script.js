@@ -1,53 +1,150 @@
-function checkTransporter(){
+let trips = JSON.parse(localStorage.getItem("trips")) || [];
 
-let t = document.getElementById("transporter").value;
+const tripForm = document.getElementById("tripForm");
+const tripTable = document.querySelector("#tripTable tbody");
+const paymentTable = document.querySelector("#paymentTable tbody");
 
-if(t === "efc"){
-    document.getElementById("extraFields").classList.remove("hidden");
+const menuSelect = document.getElementById("menuSelect");
+const tripSection = document.getElementById("tripSection");
+const paymentSection = document.getElementById("paymentSection");
+
+menuSelect.addEventListener("change", () => {
+
+if(menuSelect.value === "trip"){
+tripSection.style.display="block";
+paymentSection.style.display="none";
 }
+
 else{
-    document.getElementById("extraFields").classList.add("hidden");
+tripSection.style.display="none";
+paymentSection.style.display="block";
 }
 
-}
+});
 
-function calculate(){
+
+tripForm.addEventListener("submit", function(e){
+
+e.preventDefault();
 
 let transporter = document.getElementById("transporter").value;
+let truck = document.getElementById("truckNumber").value;
+let date = document.getElementById("tripDate").value;
+let start = document.getElementById("startLocation").value;
+let end = document.getElementById("endLocation").value;
 
-let l = parseFloat(document.getElementById("load").value);
-let u = parseFloat(document.getElementById("unload").value);
-let r = parseFloat(document.getElementById("rate").value);
-let d = parseFloat(document.getElementById("diesel").value);
-let a = parseFloat(document.getElementById("allowance").value);
+let loaded = Number(document.getElementById("weightLoaded").value);
+let delivered = Number(document.getElementById("weightDelivered").value);
 
-let w = (l*1000) - (u*1000);
+let diesel = Number(document.getElementById("diesel").value);
+let toll = Number(document.getElementById("toll").value);
+let driver = Number(document.getElementById("driver").value);
 
-let p = u*r;
+let shortage = loaded - delivered;
+let totalExpense = diesel + toll + driver;
 
-let tds = a*0.02;
+let trip = {
+date,
+transporter,
+truck,
+start,
+end,
+loaded,
+delivered,
+shortage,
+diesel,
+toll,
+driver,
+totalExpense,
+payment:false
+};
 
-let total = 0;
-let sortage = 0;
+trips.push(trip);
 
-if(transporter === "andal")
-{
-    total = p - d - a - 630 - tds;
+localStorage.setItem("trips",JSON.stringify(trips));
+
+renderTables();
+
+tripForm.reset();
+
+});
+
+
+
+function renderTables(){
+
+tripTable.innerHTML="";
+paymentTable.innerHTML="";
+
+trips.forEach((trip,index)=>{
+
+let row = `<tr>
+
+<td>${trip.date}</td>
+<td>${trip.transporter}</td>
+<td>${trip.truck}</td>
+<td>${trip.start}</td>
+<td>${trip.end}</td>
+<td>${trip.loaded}</td>
+<td>${trip.delivered}</td>
+<td>${trip.shortage}</td>
+<td>${trip.diesel}</td>
+<td>${trip.toll}</td>
+<td>${trip.driver}</td>
+<td>${trip.totalExpense}</td>
+
+<td>
+<input type="checkbox"
+${trip.payment ? "checked":""}
+onchange="togglePayment(${index})">
+</td>
+
+</tr>`;
+
+tripTable.innerHTML += row;
+
+
+let payRow = `<tr>
+
+<td>${trip.date}</td>
+<td>${trip.truck}</td>
+<td>${trip.start} → ${trip.end}</td>
+<td>${trip.payment ? "✅ Received" : "❌ Pending"}</td>
+
+</tr>`;
+
+paymentTable.innerHTML += payRow;
+
+});
+
 }
 
-if(transporter === "efc")
-{
-    let extra = parseFloat(document.getElementById("extra").value);
-    let s = parseFloat(document.getElementById("sortRate").value);
 
-    sortage = w*s;
 
-    total = p - d - a - extra - tds - sortage;
-}
+function togglePayment(index){
 
-document.getElementById("result").innerHTML =
-"Weight Shortage : " + w + " Kg <br>" +
-"Sortage Amount : ₹" + sortage + "<br>" +
-"Total Payment : ₹" + total;
+trips[index].payment = !trips[index].payment;
+
+localStorage.setItem("trips",JSON.stringify(trips));
+
+renderTables();
 
 }
+
+
+
+function downloadExcel(){
+
+let worksheet = XLSX.utils.json_to_sheet(trips);
+
+let workbook = XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(workbook, worksheet, "Trips");
+
+XLSX.writeFile(workbook, "Transport_Data.xlsx");
+
+}
+
+
+
+renderTables();
