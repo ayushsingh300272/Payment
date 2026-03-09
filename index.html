@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,13 +22,11 @@
 <option>EFC Logistics</option>
 </select>
 
-
 <label>Vehicle Number</label>
 <select id="truckNumber">
 <option>1982</option>
 <option>8218</option>
 </select>
-
 
 <label>Loading Date</label>
 <input type="date" id="loadingDate" required>
@@ -35,13 +34,11 @@
 <label>Unloading Date</label>
 <input type="date" id="unloadingDate" required>
 
-
 <label>Loading Point</label>
 <select id="loadingPoint">
 <option>Sanikpur</option>
 <option>RP Shaw</option>
 </select>
-
 
 <label>Unloading Point</label>
 <select id="unloadingPoint">
@@ -49,23 +46,20 @@
 <option>Sinni</option>
 </select>
 
-
 <label>Weight Loaded</label>
-<input type="number" id="weightLoaded">
-
+<input type="number" id="weightLoaded" step="any">
 
 <label>Weight Delivered</label>
-<input type="number" id="weightDelivered">
+<input type="number" id="weightDelivered" step="any">
 
+<label>Shortage Rate (₹ per ton/kg)</label>
+<input type="number" id="shortageRate" step="any">
 
 <label>Diesel Expense</label>
-<input type="number" id="diesel">
-
-
+<input type="number" id="diesel" step="any">
 
 <label>Driver Expense</label>
-<input type="number" id="driver">
-
+<input type="number" id="driver" step="any">
 
 <button type="submit">Add Trip</button>
 
@@ -80,7 +74,8 @@
 
 <tr>
 
-<th>Date</th>
+<th>Loading Date</th>
+<th>Unloading Date</th>
 <th>Transporter</th>
 <th>Vehicle</th>
 <th>Loading</th>
@@ -88,8 +83,9 @@
 <th>Loaded</th>
 <th>Delivered</th>
 <th>Shortage</th>
+<th>Shortage Rate</th>
+<th>Shortage Amount</th>
 <th>Diesel</th>
-<th>Toll</th>
 <th>Driver</th>
 <th>Total Expense</th>
 <th>Payment</th>
@@ -106,8 +102,8 @@
 
 <button onclick="downloadExcel()">Download Excel</button>
 
-
 <script src="script.js"></script>
 
 </body>
 </html>
+```
