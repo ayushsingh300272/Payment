@@ -1,51 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transport Management</title>
 
-<title>Transport Payment Calculator</title>
-
-<!-- CSS File -->
 <link rel="stylesheet" href="style.css">
 
+<!-- SheetJS for Excel Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 
 <body>
 
-<div class="container">
+<h1>🚚 Transport Management System</h1>
 
-<h2>Transport Payment Calculator</h2>
-
-<select id="transporter" onchange="checkTransporter()">
-<option value="">Select Transporter</option>
-<option value="andal">Andal Logistics</option>
-<option value="efc">EFC Logistics</option>
+<select id="menuSelect">
+<option value="trip">Trip Data</option>
+<option value="payment">Payments Received</option>
 </select>
 
-<input type="number" id="load" placeholder="Loading Weight (Ton)">
-<input type="number" id="unload" placeholder="Unloading Weight (Ton)">
-<input type="number" id="rate" placeholder="Rate per Ton">
-<input type="number" id="diesel" placeholder="Diesel Amount">
-<input type="number" id="allowance" placeholder="Driver Allowance">
 
-<div id="extraFields" class="hidden">
+<!-- TRIP DATA SECTION -->
 
-<input type="number" id="extra" placeholder="Extra Expenses">
-<input type="number" id="sortRate" placeholder="Shortage Rate per Kg">
+<div id="tripSection">
+
+<h2>Trip Entry</h2>
+
+<form id="tripForm">
+
+<label>Transporter</label>
+<select id="transporter">
+<option>Andal Logistics</option>
+<option>EFC Logistics</option>
+</select>
+
+<label>Vehicle Number</label>
+<select id="truckNumber">
+<option>1982</option>
+<option>8218</option>
+</select>
+
+<label>Trip Date</label>
+<input type="date" id="tripDate" required>
+
+<label>Start Location</label>
+<input type="text" id="startLocation">
+
+<label>End Location</label>
+<input type="text" id="endLocation">
+
+<label>Weight Loaded</label>
+<input type="number" id="weightLoaded">
+
+<label>Weight Delivered</label>
+<input type="number" id="weightDelivered">
+
+<label>Diesel Expense</label>
+<input type="number" id="diesel">
+
+<label>Toll Expense</label>
+<input type="number" id="toll">
+
+<label>Driver Expense</label>
+<input type="number" id="driver">
+
+<button type="submit">Add Trip</button>
+
+</form>
+
+<h2>All Trip Records</h2>
+
+<table id="tripTable">
+
+<thead>
+
+<tr>
+<th>Date</th>
+<th>Transporter</th>
+<th>Vehicle</th>
+<th>From</th>
+<th>To</th>
+<th>Loaded</th>
+<th>Delivered</th>
+<th>Shortage</th>
+<th>Diesel</th>
+<th>Toll</th>
+<th>Driver</th>
+<th>Total Expense</th>
+<th>Payment</th>
+</tr>
+
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+<button onclick="downloadExcel()">Download Excel</button>
 
 </div>
 
-<button onclick="calculate()">Calculate</button>
 
-<h3 id="result"></h3>
+
+<!-- PAYMENT SECTION -->
+
+<div id="paymentSection" style="display:none">
+
+<h2>Payments Received</h2>
+
+<table id="paymentTable">
+
+<thead>
+
+<tr>
+<th>Date</th>
+<th>Vehicle</th>
+<th>Route</th>
+<th>Payment Status</th>
+
+</tr>
+
+</thead>
+
+<tbody></tbody>
+
+</table>
 
 </div>
 
-<!-- JavaScript File -->
+
 <script src="script.js"></script>
 
 </body>
-
 </html>
