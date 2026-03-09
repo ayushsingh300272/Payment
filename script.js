@@ -2,94 +2,107 @@ let trips = JSON.parse(localStorage.getItem("trips")) || [];
 
 const tripForm = document.getElementById("tripForm");
 const tripTable = document.querySelector("#tripTable tbody");
-const paymentTable = document.querySelector("#paymentTable tbody");
 
-const menuSelect = document.getElementById("menuSelect");
-const tripSection = document.getElementById("tripSection");
-const paymentSection = document.getElementById("paymentSection");
+const weightLoaded = document.getElementById("weightLoaded");
+const weightDelivered = document.getElementById("weightDelivered");
+const shortageRate = document.getElementById("shortageRate");
 
-menuSelect.addEventListener("change", () => {
+const shortageField = document.getElementById("shortage");
+const shortageAmountField = document.getElementById("shortageAmount");
 
-if(menuSelect.value === "trip"){
-tripSection.style.display="block";
-paymentSection.style.display="none";
+
+
+/* AUTO SHORTAGE CALCULATION */
+
+function calculateShortage(){
+
+let loaded = parseFloat(weightLoaded.value) || 0;
+let delivered = parseFloat(weightDelivered.value) || 0;
+let rate = parseFloat(shortageRate.value) || 0;
+
+let shortage = loaded - delivered;
+
+if(shortage < 0){
+shortage = 0;
 }
 
-else{
-tripSection.style.display="none";
-paymentSection.style.display="block";
+let shortageAmount = shortage * rate;
+
+shortageField.value = shortage.toFixed(2);
+shortageAmountField.value = shortageAmount.toFixed(2);
+
 }
 
-});
+weightLoaded.addEventListener("input", calculateShortage);
+weightDelivered.addEventListener("input", calculateShortage);
+shortageRate.addEventListener("input", calculateShortage);
 
+
+
+/* ADD TRIP */
 
 tripForm.addEventListener("submit", function(e){
 
 e.preventDefault();
 
-let transporter = document.getElementById("transporter").value;
-let truck = document.getElementById("truckNumber").value;
-let date = document.getElementById("tripDate").value;
-let start = document.getElementById("startLocation").value;
-let end = document.getElementById("endLocation").value;
-
-let loaded = Number(document.getElementById("weightLoaded").value);
-let delivered = Number(document.getElementById("weightDelivered").value);
-
-let diesel = Number(document.getElementById("diesel").value);
-let toll = Number(document.getElementById("toll").value);
-let driver = Number(document.getElementById("driver").value);
-
-let shortage = loaded - delivered;
-let totalExpense = diesel + toll + driver;
-
 let trip = {
-date,
-transporter,
-truck,
-start,
-end,
-loaded,
-delivered,
-shortage,
-diesel,
-toll,
-driver,
-totalExpense,
+
+loadingDate: document.getElementById("loadingDate").value,
+unloadingDate: document.getElementById("unloadingDate").value,
+transporter: document.getElementById("transporter").value,
+truck: document.getElementById("truckNumber").value,
+loading: document.getElementById("loadingPoint").value,
+unloading: document.getElementById("unloadingPoint").value,
+loaded: parseFloat(weightLoaded.value) || 0,
+delivered: parseFloat(weightDelivered.value) || 0,
+shortage: parseFloat(shortageField.value) || 0,
+rate: parseFloat(shortageRate.value) || 0,
+shortageAmount: parseFloat(shortageAmountField.value) || 0,
+diesel: parseFloat(document.getElementById("diesel").value) || 0,
+driver: parseFloat(document.getElementById("driver").value) || 0,
 payment:false
+
 };
+
+trip.totalExpense = trip.diesel + trip.driver + trip.shortageAmount;
 
 trips.push(trip);
 
 localStorage.setItem("trips",JSON.stringify(trips));
 
-renderTables();
+renderTable();
 
 tripForm.reset();
+
+shortageField.value="";
+shortageAmountField.value="";
 
 });
 
 
 
-function renderTables(){
+/* TABLE RENDER */
+
+function renderTable(){
 
 tripTable.innerHTML="";
-paymentTable.innerHTML="";
 
 trips.forEach((trip,index)=>{
 
 let row = `<tr>
 
-<td>${trip.date}</td>
+<td>${trip.loadingDate}</td>
+<td>${trip.unloadingDate}</td>
 <td>${trip.transporter}</td>
 <td>${trip.truck}</td>
-<td>${trip.start}</td>
-<td>${trip.end}</td>
+<td>${trip.loading}</td>
+<td>${trip.unloading}</td>
 <td>${trip.loaded}</td>
 <td>${trip.delivered}</td>
 <td>${trip.shortage}</td>
+<td>${trip.rate}</td>
+<td>${trip.shortageAmount}</td>
 <td>${trip.diesel}</td>
-<td>${trip.toll}</td>
 <td>${trip.driver}</td>
 <td>${trip.totalExpense}</td>
 
@@ -103,17 +116,59 @@ onchange="togglePayment(${index})">
 
 tripTable.innerHTML += row;
 
+});
 
-let payRow = `<tr>
+renderReceivedTable();
+renderDueTable();
 
-<td>${trip.date}</td>
+}
+
+function renderReceivedTable(){
+
+let table = document.querySelector("#receivedTable tbody");
+
+table.innerHTML="";
+
+trips.forEach(trip=>{
+
+if(trip.payment){
+
+let row = `<tr>
+
 <td>${trip.truck}</td>
-<td>${trip.start} → ${trip.end}</td>
-<td>${trip.payment ? "✅ Received" : "❌ Pending"}</td>
+<td>${trip.loading} → ${trip.unloading}</td>
+<td>${trip.totalExpense}</td>
 
 </tr>`;
 
-paymentTable.innerHTML += payRow;
+table.innerHTML += row;
+
+}
+
+});
+
+}
+function renderDueTable(){
+
+let table = document.querySelector("#dueTable tbody");
+
+table.innerHTML="";
+
+trips.forEach(trip=>{
+
+if(!trip.payment){
+
+let row = `<tr>
+
+<td>${trip.truck}</td>
+<td>${trip.loading} → ${trip.unloading}</td>
+<td>${trip.totalExpense}</td>
+
+</tr>`;
+
+table.innerHTML += row;
+
+}
 
 });
 
@@ -121,17 +176,47 @@ paymentTable.innerHTML += payRow;
 
 
 
+/* PAYMENT TOGGLE */
+
 function togglePayment(index){
 
 trips[index].payment = !trips[index].payment;
 
 localStorage.setItem("trips",JSON.stringify(trips));
 
-renderTables();
+renderTable();
+
+}
+function showSection(section){
+
+document.getElementById("addTrip").style.display="none";
+document.getElementById("tripData").style.display="none";
+document.getElementById("received").style.display="none";
+document.getElementById("due").style.display="none";
+
+document.getElementById(section).style.display="block";
+
+}
+
+function resetAllData(){
+
+let confirmReset = confirm("Are you sure you want to delete all trip data?");
+
+if(confirmReset){
+
+localStorage.removeItem("trips");
+
+trips = [];
+
+renderTable();
+
+}
 
 }
 
 
+
+/* EXPORT TO EXCEL */
 
 function downloadExcel(){
 
@@ -141,10 +226,8 @@ let workbook = XLSX.utils.book_new();
 
 XLSX.utils.book_append_sheet(workbook, worksheet, "Trips");
 
-XLSX.writeFile(workbook, "Transport_Data.xlsx");
+XLSX.writeFile(workbook, "TransportTrips.xlsx");
 
 }
 
-
-
-renderTables();
+renderTable();
