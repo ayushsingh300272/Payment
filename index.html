@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Transport Payment Calculator</title>
+
+<!-- CSS File -->
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Transport Payment Calculator</h2>
+
+<select id="transporter" onchange="checkTransporter()">
+<option value="">Select Transporter</option>
+<option value="andal">Andal Logistics</option>
+<option value="efc">EFC Logistics</option>
+</select>
+
+<input type="number" id="load" placeholder="Loading Weight (Ton)">
+<input type="number" id="unload" placeholder="Unloading Weight (Ton)">
+<input type="number" id="rate" placeholder="Rate per Ton">
+<input type="number" id="diesel" placeholder="Diesel Amount">
+<input type="number" id="allowance" placeholder="Driver Allowance">
+
+<div id="extraFields" class="hidden">
+
+<input type="number" id="extra" placeholder="Extra Expenses">
+<input type="number" id="sortRate" placeholder="Shortage Rate per Kg">
+
+</div>
+
+<button onclick="calculate()">Calculate</button>
+
+<h3 id="result"></h3>
+
+</div>
+
+<!-- JavaScript File -->
+<script src="script.js"></script>
+
+</body>
+
+</html>
